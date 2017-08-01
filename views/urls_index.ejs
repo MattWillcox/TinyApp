@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <%- include ./partials/_header.ejs %>
-</head>
+<head></head>
 <body>
-    <!-- Add your EJS code here -->
-    <ul>
-      <% for(var obj in urls) {%>
-        <li><%= obj %>: <%= urls[obj] %></li>
-      <% }; %>
-    </ul>
-    <a href=''>Shorten a new URL</a>
+  <%- include partials/_header.ejs %>
+  <!-- Add your EJS code here -->
+  <ul>
+    <% for(var obj in urls) {%>
+      <li><%= obj %>: <%= urls[obj] %></li>
+    <% }; %>
+  </ul>
+  <a href=''>Shorten a new URL</a>
 </body>
 </html>
