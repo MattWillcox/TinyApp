@@ -1,15 +1,11 @@
-<title>TinyApp</title>
-
-<% if(!user_id) { %>
-<form action="/login" method="POST">
-  <label for="loginField">Enter a username:</label>
-  <input id="loginField" type="text" name="loginName" placeholder="Username" style="width: 300px">
-  <input type="submit" value="Submit">
-</form>
-
+<% if(!signed_in) { %>
+  <a href='/login'>Log in here</a>
+  <br>
+  <br>
+  <a href='/register'>Register here</a>
 <% } else { %>
-<p> Current username: <%= user_id %> </p>
-<form action="/logout" method="POST">
+  <p>Currently signed in as: <%= signed_in %></p>
+  <form action="/logout" method="POST">
   <input type="submit" value="Logout">
-</form>
+  </form>
 <% } %>

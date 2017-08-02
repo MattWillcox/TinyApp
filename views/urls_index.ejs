@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head></head>
-<body>
-  <%- include partials/_header.ejs %>
-  <!-- Add your EJS code here -->
-  <ul>
-    <% for(var obj in urls) {%>
-      <li><%= obj %>: <%= urls[obj] %>
-      <a href = '/urls/<%= obj %>'>Edit</a>
-      <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
-      </li>
-    <% }; %>
-  </ul>
-  <a href='urls/new'>Shorten a new URL</a>
-</body>
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
+    <%- include partials/_header.ejs %>
+    <ul>
+      <% for(var obj in urls) {%>
+        <li><%= obj %>: <%= urls[obj] %>
+        <a href = '/urls/<%= obj %>'>Edit</a>
+        <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
+        </li>
+      <% }; %>
+    </ul>
+    <a href='urls/new'>Shorten a new URL</a>
+    <br>
+    <br>
+    <a href='/urls'>Back to URLS</a>
+  </body>
 </html>

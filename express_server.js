@@ -25,7 +25,8 @@ const users = {
     email: "user2@example.com",
     password: "dishwasher-funk"
   }
-}
+};
+
 
 //Generates the shortURL string, 6 chars of alphanumerics
 function generateRandomString() {
@@ -50,19 +51,22 @@ app.get("/urls.json", (req, res) => {
 
 //renders /urls page with urls_index.ejs
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"] };
+  let currentlySignedIn = (req.cookies["user_id"]) ? req.cookies["user_id"].id : undefined;
+  let templateVars = { urls: urlDatabase, user_id: users[req.cookies["user_id"]], signed_in: currentlySignedIn };
   res.render("urls_index", templateVars);
 });
 
 //renders /urls/new page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["user_id"] }
+  let currentlySignedIn = (req.cookies["user_id"]) ? req.cookies["user_id"].id : undefined;
+  let templateVars = { user_id: users[req.cookies["user_id"]], signed_in: currentlySignedIn }
   res.render("urls_new", templateVars);
 });
 
 //renders /urls/:id page (:id = shortURL) with urls_show.ejs
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["user_id"]};
+  let currentlySignedIn = (req.cookies["user_id"]) ? req.cookies["user_id"].id : undefined;
+  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], user_id: users[req.cookies["user_id"]], signed_in: currentlySignedIn };
   res.render("urls_show", templateVars);
 });
 
@@ -77,6 +81,10 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  res.render("urls_login");
+});
+
 //generates a new shortURL for specified longURL and redirects to the shortURL page
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString()
@@ -86,7 +94,6 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-  console.log(urlDatabase);
   res.redirect(`/urls`);
 });
 
@@ -96,8 +103,18 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('user_id', `${req.body.loginName}`);
-  res.redirect(`/urls`);
+  let foundFlag = 0;
+  for(var user in users){
+    if(users[user].email === req.body.email && users[user].password === req.body.password){
+      res.cookie('user_id', users[user]);
+      res.redirect(`/urls`);
+      foundFlag = 1;
+    }
+  }
+
+  if(!foundFlag){
+    res.status(403).send('Email not found or password incorrect');
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -123,7 +140,7 @@ app.post("/register", (req, res) => {
     newUser.password = req.body.password;
 
     users[`${newUser.id}`] = newUser;
-    res.cookie('user_id', newUser.id);
+    res.cookie('user_id', newUser);
     res.redirect('/urls');
   }
 });
