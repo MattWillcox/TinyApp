@@ -14,6 +14,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+}
+
 //Generates the shortURL string, 6 chars of alphanumerics
 function generateRandomString() {
   var text = "";
@@ -59,6 +72,11 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/register", (req, res) => {
+  let templateVars = { users };
+  res.render("urls_register", templateVars);
+});
+
 //generates a new shortURL for specified longURL and redirects to the shortURL page
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString()
@@ -85,6 +103,20 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect(`/urls`);
+});
+
+app.post("/register", (req, res) => {
+  let newUser = {}
+  newUser.id = generateRandomString();
+  newUser.email = req.body.email;
+  newUser.password = req.body.password;
+
+
+  users[`${newUser.id}`] = newUser;
+  res.cookie('user_id', newUser.id);
+  console.log(users);
+  res.redirect('/urls');
+
 });
 
 //listening port
