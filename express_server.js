@@ -50,19 +50,19 @@ app.get("/urls.json", (req, res) => {
 
 //renders /urls page with urls_index.ejs
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = { urls: urlDatabase, user_id: req.cookies["user_id"] };
   res.render("urls_index", templateVars);
 });
 
 //renders /urls/new page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] }
+  let templateVars = { username: req.cookies["user_id"] }
   res.render("urls_new", templateVars);
 });
 
 //renders /urls/:id page (:id = shortURL) with urls_show.ejs
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"]};
+  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["user_id"]};
   res.render("urls_show", templateVars);
 });
 
@@ -96,27 +96,36 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', `${req.body.loginName}`);
+  res.cookie('user_id', `${req.body.loginName}`);
   res.redirect(`/urls`);
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect(`/urls`);
 });
 
 app.post("/register", (req, res) => {
-  let newUser = {}
-  newUser.id = generateRandomString();
-  newUser.email = req.body.email;
-  newUser.password = req.body.password;
+  if((req.body.email).length === 0 || (req.body.password).length === 0){
+    res.status(400).send('Please enter an email and a password');
+  }
 
+  for(var user in users){
+    if(users[user].email === req.body.email){
+      res.status(400).send('Email is already registered');
+    }
+  }
 
-  users[`${newUser.id}`] = newUser;
-  res.cookie('user_id', newUser.id);
-  console.log(users);
-  res.redirect('/urls');
+  if(res.statusCode !== 400){
+    let newUser = {}
+    newUser.id = generateRandomString();
+    newUser.email = req.body.email;
+    newUser.password = req.body.password;
 
+    users[`${newUser.id}`] = newUser;
+    res.cookie('user_id', newUser.id);
+    res.redirect('/urls');
+  }
 });
 
 //listening port

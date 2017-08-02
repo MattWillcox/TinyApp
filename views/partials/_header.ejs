@@ -1,6 +1,6 @@
 <title>TinyApp</title>
 
-<% if(!username) { %>
+<% if(!user_id) { %>
 <form action="/login" method="POST">
   <label for="loginField">Enter a username:</label>
   <input id="loginField" type="text" name="loginName" placeholder="Username" style="width: 300px">
@@ -8,7 +8,7 @@
 </form>
 
 <% } else { %>
-<p> Current username: <%= username %> </p>
+<p> Current username: <%= user_id %> </p>
 <form action="/logout" method="POST">
   <input type="submit" value="Logout">
 </form>
