@@ -6,9 +6,11 @@
   <!-- Add your EJS code here -->
   <ul>
     <% for(var obj in urls) {%>
-      <li><%= obj %>: <%= urls[obj] %></li>
+      <li><%= obj %>: <%= urls[obj] %>
+      <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
+      </li>
     <% }; %>
   </ul>
-  <a href=''>Shorten a new URL</a>
+  <a href='urls/new'>Shorten a new URL</a>
 </body>
 </html>
