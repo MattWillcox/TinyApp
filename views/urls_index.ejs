@@ -7,7 +7,7 @@
   <ul>
     <% for(var obj in urls) {%>
       <li><%= obj %>: <%= urls[obj] %>
-      <a href = 'urls/<%= obj %>'>Edit</a>
+      <a href = '/urls/<%= obj %>'>Edit</a>
       <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
       </li>
     <% }; %>
