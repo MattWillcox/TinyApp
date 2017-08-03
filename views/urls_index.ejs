@@ -7,7 +7,7 @@
     <%- include partials/_header.ejs %>
     <ul>
       <% for(var obj in urls) {%>
-        <li><%= obj %>: <%= urls[obj] %>
+        <li><a href = 'urls/<%= obj %>'><%= obj %></a>: <%= urls[obj] %>
         <a href = '/urls/<%= obj %>'>Edit</a>
         <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
         </li>
