@@ -31,7 +31,6 @@ const users = {
   }
 };
 
-
 //Generates the shortURL string, 6 chars of alphanumerics
 function generateRandomString() {
   var text = "";
@@ -69,11 +68,15 @@ app.get("/urls", (req, res) => {
 
 //renders /urls/new page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    userId: users[app.locals.user],
-    signedIn: app.locals.user
-  };
-  res.render("urls_new", templateVars);
+  if(app.locals.user){
+    const templateVars = {
+      userId: users[app.locals.user],
+      signedIn: app.locals.user
+    };
+    res.render("urls_new", templateVars);
+  }
+  else
+    res.redirect('/login');
 });
 
 //renders /urls/:id page (:id = shortURL) with urls_show.ejs
