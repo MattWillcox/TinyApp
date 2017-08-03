@@ -5,17 +5,18 @@
   </head>
   <body>
     <%- include partials/_header.ejs %>
-    <ul>
-      <% for(var obj in urls) {%>
-        <li><a href = 'urls/<%= obj %>'><%= obj %></a>: <%= urls[obj] %>
-        <a href = '/urls/<%= obj %>'>Edit</a>
-        <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
-        </li>
-      <% }; %>
-    </ul>
-    <a href='urls/new'>Shorten a new URL</a>
-    <br>
-    <br>
-    <a href='/urls'>Back to URLS</a>
+    <% if(!signedIn) { %>
+      <h2>Please login or register above</h2>
+    <% } else { %>
+      <ul>
+        <% for(var obj in urls) {%>
+          <li><a href = 'u/<%= obj %>'><%= obj %></a>: <%= urls[obj].url %>
+          <a href = '/urls/<%= obj %>'>Edit</a>
+          <form method="POST" action="/urls/<%= obj %>/delete"><input type="submit" value="Delete"></form>
+          </li>
+        <% } %>
+      </ul>
+      <a href='/urls/new'>Shorten a new URL</a>
+    <% } %>
   </body>
 </html>

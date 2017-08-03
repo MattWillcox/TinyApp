@@ -13,8 +13,14 @@ const PORT = process.env.PORT || 8080;
 
 //current Database of URLS
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    url: "http://www.lighthouselabs.ca",
+    userId : "test"
+  },
+  "9sm5xK": {
+    url: "http://www.google.com",
+    userId: "test2"
+  }
 };
 
 //current DB of users
@@ -44,34 +50,45 @@ function generateRandomString() {
 }
 
 app.use((req, res, next) => {
-  app.locals.user = null;
-  if(req.cookies.userId){
-    app.locals.user = req.cookies.userId;
-  }
+  res.locals.user = req.cookies.userId;
   next();
 });
 
+/*------------------------
+  GET REQUESTS
+-------------------------*/
+
 //index page that just displays Hello!
 app.get("/", (req, res) => {
-  res.end("Hello!");
+  res.redirect('/urls');
 });
+
+function urlsForUser(id){
+  let subsetDB = {};
+  for(let i in urlDatabase){
+    if(urlDatabase[i].userId === id){
+      subsetDB[i] = urlDatabase[i];
+    }
+  }
+  return subsetDB;
+}
 
 //renders /urls page with urls_index.ejs
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlDatabase,
-    userId: users[app.locals.user],
-    signedIn: app.locals.user
+    urls: urlsForUser(res.locals.user),
+    userId: users[res.locals.user],
+    signedIn: res.locals.user
   };
   res.render("urls_index", templateVars);
 });
 
 //renders /urls/new page with urls_new.ejs
 app.get("/urls/new", (req, res) => {
-  if(app.locals.user){
+  if(res.locals.user){
     const templateVars = {
-      userId: users[app.locals.user],
-      signedIn: app.locals.user
+      userId: users[res.locals.user],
+      signedIn: res.locals.user
     };
     res.render("urls_new", templateVars);
   }
@@ -84,15 +101,17 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    userId: users[app.locals.user],
-    signedIn: app.locals.user
+    userId: users[res.locals.user],
+    signedIn: res.locals.user
   };
-  res.render("urls_show", templateVars);
+  if(res.locals.user === urlDatabase[req.params.id].userId){
+    res.render("urls_show", templateVars);
+  }
 });
 
 //redirects client to the longURL version of provided short URL
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].url;
   res.redirect(longURL);
 });
 
@@ -106,22 +125,31 @@ app.get("/login", (req, res) => {
   res.render("urls_login");
 });
 
+
+/*------------------------
+  POST REQUESTS
+-------------------------*/
+
 //generates a new shortURL for specified longURL and redirects to the shortURL page
-app.post("/urls", (req, res) => {
+app.post("/urls/new", (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = `http://www.${req.body.longURL}`;
+  urlDatabase[shortURL] = { url: req.body.longURL,
+                            userId: res.locals.user
+                          }
   res.redirect(`/urls/${shortURL}`);
 });
 
 //deletes URL from DB and refreshes page
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect(`/urls`);
+  if(res.locals.user === urlDatabase[req.params.id].userId){
+    delete urlDatabase[req.params.id];
+    res.redirect(`/urls`);
+  }
 });
 
 //displays current smallURL and displays update longURL option
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = `http://www.${req.body.longURL}`;
+  urlDatabase[req.params.id].url = req.body.longURL;
   res.redirect(`/urls`);
 });
 
