@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const  methodOverride = require('method-override')
 
 const app = express();
 app.set("view engine", "ejs");
@@ -9,7 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   secret: 'this is super secret'
 }));
-
+app.use(methodOverride('_method'));
 
 // default port 8080
 const PORT = process.env.PORT || 8080;
@@ -144,7 +145,7 @@ app.post("/urls", (req, res) => {
 });
 
 //deletes URL from DB and refreshes page
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id/", (req, res) => {
   if(res.locals.user){
     if(res.locals.user === urlDatabase[req.params.id].userId){
       delete urlDatabase[req.params.id];
@@ -156,7 +157,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 //displays current smallURL and displays update longURL option
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   if(req.session.userId && req.session.userId === urlDatabase[req.params.id].userId){
     urlDatabase[req.params.id].url = req.body.longURL;
     res.redirect(`/urls`);

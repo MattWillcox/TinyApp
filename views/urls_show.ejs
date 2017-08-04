@@ -6,7 +6,7 @@
     <h1>
     ShortURL: <a href="/u/<%= shortURL %>"> <%= shortURL %> </a>
     </h1>
-    <form action="/urls/<%= shortURL %>" method="POST">
+    <form action="/urls/<%= shortURL %>?_method=PUT" method="POST">
         <label for="longURL">Update to a new URL:</label>
         <input id="longURL" type="text" name="longURL" placeholder="http://">
         <p>Current longURL: http://<%= longURL %></p>
