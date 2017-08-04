@@ -1,11 +1,13 @@
-<% if(!signedIn) { %>
-  <a href='/login'>Log in here</a>
-  <br>
-  <br>
-  <a href='/register'>Register here</a>
-<% } else { %>
-  <p>Currently signed in as: <%= signedIn %></p>
-  <form action="/logout" method="POST">
-  <input type="submit" value="Logout">
-  </form>
-<% } %>
+<h1>
+  <% if(!signedIn) { %>
+    <a href='/login'>Log in here</a>
+    <br>
+    <br>
+    <a href='/register'>Register here</a>
+  <% } else { %>
+    <p>Currently signed in as: <%= signedIn %></p>
+    <form action="/logout" method="POST">
+    <input type="submit" value="Logout">
+    </form>
+  <% } %>
+</h1>

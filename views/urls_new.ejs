@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head></head>
+  <head>
+    <title>URL Shortener</title>
+  </head>
   <%- include partials/_header.ejs %>
   <body">
-    <form action="/urls/new" method="POST">
+    <form action="/urls/" method="POST">
       <label for="longURL">Enter a URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://">
       <input type="submit" value="Submit">
