@@ -110,9 +110,10 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].url;
     res.redirect('http://' + longURL);
     urlDatabase[req.params.shortURL].visits++;
-    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x === res.locals.user) })){
+    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x.currUser === res.locals.user) })){
       var date = new Date();
-      urlDatabase[req.params.shortURL].uniqueVisitors.push({ currUser : res.locals.user, currTime: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`});
+      urlDatabase[req.params.shortURL].uniqueVisitors.push({ currUser : res.locals.user,
+      currTime: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} UTC`});
     }
   } else {
     res.status(403).send('This URL does not exist');
