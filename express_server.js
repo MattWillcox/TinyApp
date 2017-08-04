@@ -111,8 +111,8 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect('http://' + longURL);
     urlDatabase[req.params.shortURL].visits++;
     if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x === res.locals.user) })){
-      urlDatabase[req.params.shortURL].uniqueVisitors.push(res.locals.user);
-      console.log(urlDatabase[req.params.shortURL].uniqueVisitors);
+      var date = new Date();
+      urlDatabase[req.params.shortURL].uniqueVisitors.push({ currUser : res.locals.user, currTime: `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`});
     }
   } else {
     res.status(403).send('This URL does not exist');

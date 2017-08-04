@@ -9,10 +9,16 @@
     <form action="/urls/<%= shortURL %>?_method=PUT" method="POST">
         <label for="longURL">Update to a new URL:</label>
         <input id="longURL" type="text" name="longURL" placeholder="http://">
+        <input type="submit" value="Submit">
         <p>Current longURL: http://<%= longURL %></p>
         <p>Number of visits today: <%= visits %></p>
         <p>Number of unique visits: <%= uniqueVisitors.length %></p>
-        <input type="submit" value="Submit">
+        <h3>Visitor Log:</h3>
+        <ul>
+          <% for(let i in uniqueVisitors) { %>
+            <li>Username: <%= uniqueVisitors[i].currUser %> at: <%= uniqueVisitors[i].currTime %></li>
+          <% } %>
+        </ul>
     </form>
     <br>
     <br>
