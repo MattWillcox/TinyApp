@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
 const moment = require('moment');
 
 const app = express();
@@ -78,6 +78,7 @@ app.get("/urls/new", (req, res) => {
       signedIn: res.locals.user
     };
     res.render("urls_new", templateVars);
+    return;
   } else {
     res.redirect('/login');
   }
@@ -90,10 +91,11 @@ app.get("/urls/:id", (req, res) => {
       longURL: urlDatabase[req.params.id].url,
       signedIn: res.locals.user,
       visits: urlDatabase[req.params.id].visits,
-      uniqueVisitors : urlDatabase[req.params.id].uniqueVisitors
+      uniqueVisitors: urlDatabase[req.params.id].uniqueVisitors
     };
     if(res.locals.user === urlDatabase[req.params.id].userId){
       res.render("urls_show", templateVars);
+      return;
     } else {
       res.status(403).send('You are not logged in as this URLs owner');
     }
@@ -107,12 +109,12 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].url;
     res.redirect('http://' + longURL);
     urlDatabase[req.params.shortURL].visits++;
-    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => {
-      return (x.currUser === res.locals.user) }))
-    {
+    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x.currUser === res.locals.user); })) {
+      if(!res.locals.user){
+        res.locals.user = 'Anonymous';
+      }
       var date = new Date();
-      urlDatabase[req.params.shortURL].uniqueVisitors.push({ currUser : res.locals.user,
-      currTime : moment().format('llll')});
+      urlDatabase[req.params.shortURL].uniqueVisitors.push({ currUser: res.locals.user, currTime: moment().format('llll') + " UTC"});
     }
   } else {
     res.status(403).send('This URL does not exist');
