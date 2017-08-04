@@ -94,7 +94,7 @@ app.get("/urls/:id", (req, res) => {
     if(res.locals.user === urlDatabase[req.params.id].userId){
       res.render("urls_show", templateVars);
     } else {
-      res.status(403).send('You are not logged in as this URLs owner'');
+      res.status(403).send('You are not logged in as this URLs owner');
     }
   } else {
     res.status(403).send('This URL does not exist');
