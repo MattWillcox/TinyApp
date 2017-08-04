@@ -91,7 +91,8 @@ app.get("/urls/:id", (req, res) => {
       shortURL: req.params.id,
       longURL: urlDatabase[req.params.id].url,
       signedIn: res.locals.user,
-      visits: urlDatabase[req.params.id].visits
+      visits: urlDatabase[req.params.id].visits,
+      uniqueVisitors : urlDatabase[req.params.id].uniqueVisitors
     };
     if(res.locals.user === urlDatabase[req.params.id].userId){
       res.render("urls_show", templateVars);
@@ -109,6 +110,10 @@ app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].url;
     res.redirect('http://' + longURL);
     urlDatabase[req.params.shortURL].visits++;
+    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x === res.locals.user) })){
+      urlDatabase[req.params.shortURL].uniqueVisitors.push(res.locals.user);
+      console.log(urlDatabase[req.params.shortURL].uniqueVisitors);
+    }
   } else {
     res.status(403).send('This URL does not exist');
   }
@@ -139,7 +144,7 @@ app.get("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   if(req.session.userId){
     const shortURL = generateRandomString();
-    urlDatabase[shortURL] = { url: req.body.longURL, userId: res.locals.user, visits: 0 };
+    urlDatabase[shortURL] = { url: req.body.longURL, userId: res.locals.user, visits: 0, uniqueVisitors: [] };
     res.redirect(`/urls/${shortURL}`);
   } else {
     res.status(403).send("you are not logged in.");
