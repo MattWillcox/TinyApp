@@ -38,6 +38,7 @@ function generateRandomString() {
 
 app.use((req, res, next) => {
   res.locals.user = req.session.userId;
+  res.locals.anon = req.session.anon;
   next();
 });
 
@@ -107,24 +108,25 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   if(urlDatabase[req.params.shortURL]){
     const longURL = urlDatabase[req.params.shortURL].url;
-    res.redirect('http://' + longURL);
     urlDatabase[req.params.shortURL].visits++;
-    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x.currUser === res.locals.user); })) {
-      if(!res.locals.user){
-        res.locals.user = 'Anonymous';
+    if(!res.locals.user){
+      if(!res.locals.anon){
+      res.locals.user = 'Anonymous-' + generateRandomString();
+      req.session.anon = res.locals.user;
       }
+      res.locals.user = req.session.anon;
+    }
+    if(!urlDatabase[req.params.shortURL].uniqueVisitors.find(x => { return (x.currUser === res.locals.user); })) {
       var date = new Date();
       urlDatabase[req.params.shortURL].uniqueVisitors.push({ currUser: res.locals.user, currTime: moment().format('llll') + " UTC"});
     }
+    res.redirect('http://' + longURL);
   } else {
     res.status(403).send('This URL does not exist');
   }
 });
 
 app.get("/register", (req, res) => {
-  if(req.session.userId){
-    res.render("/urls");
-  }
   res.render("urls_register");
 });
 
